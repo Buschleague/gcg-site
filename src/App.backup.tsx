@@ -1,28 +1,28 @@
-import React, { useMemo, useRef, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 
+// Grab hero directly; if missing, the build will tell us clearly.
+import heroImage from './assets/GeminiCG.png'
+
+// Use glob so optional assets (pdf/jpg/jpeg) won't break the build if absent.
+const assets = import.meta.glob('./assets/*', { eager: true, as: 'url' }) as Record<string, string | undefined>
+const handcraftedPdf = (assets['./assets/handcrafed.pdf'] || assets['./assets/handcrafted.pdf']) as string | undefined
+const ozarkLogo = assets['./assets/ozark.jpg'] as string | undefined
+const sparkleLogo = (assets['./assets/sparkle-logo.jpeg'] || assets['./assets/sparkle-logo.jpg']) as string | undefined
+
 export default function App() {
-  const fileRef = useRef<HTMLInputElement | null>(null)
-  const [heroImg, setHeroImg] = useState<string | null>(null)
-  const [overlay, setOverlay] = useState(0.45)
-  const [showPlanModal, setShowPlanModal] = useState(false)
-  const [showPoolModal, setShowPoolModal] = useState(false)
-  const [toast, setToast] = useState<string | null>(null)
-
-  const handlePick = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const f = e.target.files?.[0]
-    if (!f) return
-    const reader = new FileReader()
-    reader.onload = () => setHeroImg(reader.result as string)
-    reader.readAsDataURL(f)
-  }
-
+  // Fixed low global scrim; no slider, no upload.
+  const overlay = 0.45
   const fallbackBg = useMemo(() => ({
     backgroundImage:
       `radial-gradient(1200px 600px at 50% -200px, rgba(25,58,50,0.7), rgba(15,42,35,1)),` +
       mountainLayers(6, '#0b1f1a', '#0f2a23'),
     backgroundBlendMode: 'overlay, normal',
   }), [])
+
+  const [showPlanModal, setShowPlanModal] = useState(false)
+  const [showPoolModal, setShowPoolModal] = useState(false)
+  const [toast, setToast] = useState<string | null>(null)
 
   return (
     <div className="min-h-screen w-full bg-[#0f2a23] text-neutral-200 font-sans">
@@ -43,36 +43,30 @@ export default function App() {
         </nav>
       </header>
 
-      {/* FULL-BLEED HERO */}
+      {/* FULL-BLEED HERO (locked to GeminiCG.png) */}
       <section className="relative min-h-[92vh]">
-        {/* Background */}
-        {heroImg ? (
-          <div className="absolute inset-0 z-0 bg-center bg-no-repeat pointer-events-none" style={{ backgroundImage: `url(${heroImg})`, backgroundSize: 'contain' }} />
-        ) : (
-          <div className="absolute inset-0 z-0 pointer-events-none" style={fallbackBg as any} />
-        )}
-        {/* Global scrim (low) */}
-        <div className="absolute inset-0 z-0 pointer-events-none" style={{
-          background:
-            `radial-gradient(1200px 600px at 50% -200px, rgba(15,42,35,${overlay - 0.15}), rgba(15,42,35,${overlay})),` +
-            `linear-gradient(to bottom, rgba(15,42,35,${overlay}) 0%, rgba(15,42,35,${overlay + 0.1}) 60%, rgba(15,42,35,${overlay + 0.2}) 100%)`,
-        }} />
+        {/* Background hero image */}
+        <div
+          className="absolute inset-0 z-0 bg-center bg-no-repeat pointer-events-none"
+          style={{ backgroundImage: `url(${heroImage})`, backgroundSize: 'contain' }}
+        />
+        {/* Texture backdrop */}
+        <div className="absolute inset-0 z-[-1] pointer-events-none" style={fallbackBg as any} />
+        {/* Low global scrim for cohesion */}
+        <div
+          className="absolute inset-0 z-0 pointer-events-none"
+          style={{
+            background:
+              `radial-gradient(1200px 600px at 50% -200px, rgba(15,42,35,${overlay - 0.15}), rgba(15,42,35,${overlay})),` +
+              `linear-gradient(to bottom, rgba(15,42,35,${overlay}) 0%, rgba(15,42,35,${overlay + 0.1}) 60%, rgba(15,42,35,${overlay + 0.2}) 100%)`,
+          }}
+        />
 
-        {/* Controls */}
-        <div className="relative z-10 mx-auto max-w-6xl px-4 pt-4 flex items-center justify-end gap-3">
-          <input ref={fileRef} type="file" accept="image/*" onChange={handlePick} className="hidden" />
-          <button onClick={() => fileRef.current?.click()} className="rounded-xl border border-[#3a5d52] bg-[#152f28] px-3 py-1.5 text-xs text-[#c4a070] hover:bg-[#19382f]">Choose Hero Image</button>
-          <div className="flex items-center gap-2 text-xs text-neutral-300">
-            <span>Overlay</span>
-            <input type="range" min={0.3} max={0.9} step={0.05} value={overlay} onChange={(e)=>setOverlay(parseFloat(e.target.value))} className="w-28 accent-[#c4a070]" />
-          </div>
-        </div>
-
-        {/* Copy block – positioned to preserve full logo visibility */}
+        {/* Copy block — positioned to avoid logo/roots/wordmark */}
         <div className="relative z-10 mx-auto max-w-6xl px-4 min-h-[70vh]">
           <div className="absolute left-4 right-4 bottom-16 md:left-8 md:right-auto md:bottom-auto md:top-1/2 md:-translate-y-1/2">
             <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="relative max-w-xl md:max-w-2xl">
-              {/* Localized scrim */}
+              {/* Localized scrim only behind text */}
               <div aria-hidden className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[#0d241e]/80 to-[#0d241e]/50 backdrop-blur-sm border border-[#24463d]/70 shadow-xl shadow-black/30" />
               <div className="relative rounded-3xl p-6 md:p-8">
                 <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl tracking-wide text-[#d4bc99] drop-shadow-[0_2px_3px_rgba(0,0,0,0.7)]">
@@ -114,11 +108,41 @@ export default function App() {
 
       {/* BRANDS */}
       <section id="brands" className="mx-auto max-w-6xl px-4 py-16">
-        <SectionHeader title="Investing in Growth" subtitle="A small, focused portfolio we can stand behind." />
+        <SectionHeader title="Investing in Growth" subtitle="A focused portfolio we can stand behind." />
         <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
-          <BrandCard name="Your Brand Here" blurb="Add your wife's companies to showcase current backing." />
-          <BrandCard name="Second Brand" blurb="Short 1–2 sentence descriptor with a link." />
-          <AddBrandCard />
+          <BrandCard
+            name="Handcrafted by Ashley"
+            blurb="Local artisan soap & crafts that support the Boston Mountain community."
+            logo={
+              handcraftedPdf ? (
+                <object data={handcraftedPdf} type="application/pdf" className="h-10 w-10 rounded-lg border border-[#2a4d42]"></object>
+              ) : (
+                <div className="h-10 w-10 rounded-lg border border-[#2a4d42] bg-[#133127] grid place-items-center text-[10px] text-[#c4a070]">HBA</div>
+              )
+            }
+          />
+          <BrandCard
+            name="Sparkle Squad"
+            blurb="Cleaning services tailored to short-term rental owners across the Boston Mountains."
+            logo={
+              sparkleLogo ? (
+                <img src={sparkleLogo} alt="Sparkle Squad logo" className="h-10 w-10 rounded-lg border border-[#2a4d42] object-cover" />
+              ) : (
+                <div className="h-10 w-10 rounded-lg border border-[#2a4d42] bg-[#133127]" />
+              )
+            }
+          />
+          <BrandCard
+            name="Ozark Events Hub"
+            blurb="Curating and promoting cultural happenings that celebrate the spirit of the Ozarks."
+            logo={
+              ozarkLogo ? (
+                <img src={ozarkLogo} alt="Ozark Events Hub logo" className="h-10 w-10 rounded-lg border border-[#2a4d42] object-cover" />
+              ) : (
+                <div className="h-10 w-10 rounded-lg border border-[#2a4d42] bg-[#133127]" />
+              )
+            }
+          />
         </div>
       </section>
 
@@ -195,24 +219,17 @@ function SectionHeader({ title, subtitle }: { title: string; subtitle?: string }
   )
 }
 
-function BrandCard({ name, blurb }: { name: string; blurb: string }) {
+function BrandCard({ name, blurb, logo }: { name: string; blurb: string; logo: React.ReactNode }) {
   return (
     <div className="rounded-2xl border border-[#24463d] bg-[#102721] p-5 hover:bg-[#123128] transition">
       <div className="flex items-center gap-3">
-        <div className="h-10 w-10 rounded-lg border border-[#2a4d42] bg-[#133127]" />
+        {logo}
         <div>
           <div className="text-[#c4a070] font-medium">{name}</div>
           <div className="text-sm text-neutral-300/90">{blurb}</div>
         </div>
       </div>
-      <button className="mt-4 btn btn-outline">Visit Website</button>
     </div>
-  )
-}
-
-function AddBrandCard() {
-  return (
-    <div className="rounded-2xl border-2 border-dashed border-[#2a4d42] p-5 text-center text-sm text-neutral-300">Add another brand card here as your portfolio grows.</div>
   )
 }
 
@@ -292,12 +309,4 @@ function mountainLayers(layers: number, from: string, to: string) {
   for (let i = 0; i < layers; i++) {
     const opacity = 0.05 + i * 0.06
     const y = 50 + i * 60
-    arr.push(`linear-gradient(to top, ${from}${hexOpacity(opacity)} ${y}px, ${to}00 ${y}px)`)
-  }
-  return arr.join(',\n')
-}
-
-function hexOpacity(opacity: number) {
-  const o = Math.round(Math.min(1, Math.max(0, opacity)) * 255)
-  return (o | (1 << 8)).toString(16).slice(1)
-}
+    arr.push(`linear-gradient(to top, ${from}${hex
