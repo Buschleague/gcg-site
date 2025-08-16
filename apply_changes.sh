@@ -1,3 +1,39 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "==> Project root: $(pwd)"
+echo "==> Node: $(node -v) | npm: $(npm -v)"
+
+echo "==> Listing src/assets:"
+ls -la src/assets || { echo "src/assets missing"; exit 1; }
+
+# Soft-verify assets (no hard exit)
+want=( "GeminiCG.png" "handcrafed.pdf" "handcrafted.pdf" "ozark.jpg" "sparkle-logo.jpeg" "sparkle-logo.jpg" )
+for f in "${want[@]}"; do
+  if [ -f "src/assets/$f" ]; then
+    echo "✓ found src/assets/$f"
+  else
+    echo "• (not found) src/assets/$f"
+  fi
+done
+
+echo "==> Add TS declaration for PDF imports (safe if already exists)…"
+mkdir -p src
+cat > src/vite-env.d.ts <<'TS'
+/// <reference types="vite/client" />
+declare module "*.pdf" {
+  const src: string;
+  export default src;
+}
+TS
+
+echo "==> Backing up current App.tsx to src/App.backup.tsx…"
+if [ -f src/App.tsx ]; then
+  cp -f src/App.tsx src/App.backup.tsx
+fi
+
+echo "==> Writing new src/App.tsx (locked hero, no upload/slider, real brands)…"
+cat > src/App.tsx <<'TSX'
 import React, { useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 
