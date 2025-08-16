@@ -1,4 +1,3 @@
-// src/config/assets.ts
 export const assetPaths = {
   hero: './assets/GeminiCG.png',
   handcrafted: './assets/handcrafted.pdf',
