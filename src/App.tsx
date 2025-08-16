@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
+import { assetPaths } from './config/assets'
 
 // Grab hero directly; if missing, the build will tell us clearly.
 import heroImage from './assets/GeminiCG.png'
