@@ -1,0 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.btn { @apply rounded-xl bg-[#17362e] border border-[#3a5d52] px-4 py-2 text-sm text-neutral-200 hover:bg-[#1b3f35]; }
+.btn-outline { @apply bg-transparent text-neutral-200 hover:bg-[#17362e]; }
+.btn-ghost { @apply border-transparent bg-transparent hover:bg-[#17362e]; }
