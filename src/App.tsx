@@ -6,7 +6,7 @@ import heroImage from './assets/GeminiCG.png'
 
 // Use glob so optional assets (pdf/jpg/jpeg) won't break the build if absent.
 const assets = import.meta.glob('./assets/*', { eager: true, as: 'url' }) as Record<string, string | undefined>
-const handcraftedPdf = (assets['./assets/handcrafed.pdf'] || assets['./assets/handcrafted.pdf']) as string | undefined
+const handcrafted = assets['./assets/handcrafted.png'] as string | undefined
 const ozarkLogo = assets['./assets/ozark.jpg'] as string | undefined
 const sparkleLogo = (assets['./assets/sparkle-logo.jpeg'] || assets['./assets/sparkle-logo.jpg']) as string | undefined
 
@@ -114,8 +114,8 @@ export default function App() {
             name="Handcrafted by Ashley"
             blurb="Local artisan soap & crafts that support the Boston Mountain community."
             logo={
-              handcraftedPdf ? (
-                <object data={handcraftedPdf} type="application/pdf" className="h-10 w-10 rounded-lg border border-[#2a4d42]"></object>
+              handcrafted ? (
+                <img src={handcrafted} alt="Handcrafted by Ashley logo" className="h-10 w-10 rounded-lg border border-[#2a4d42] object-cover" />
               ) : (
                 <div className="h-10 w-10 rounded-lg border border-[#2a4d42] bg-[#133127] grid place-items-center text-[10px] text-[#c4a070]">HBA</div>
               )
