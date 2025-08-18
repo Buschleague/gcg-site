@@ -107,7 +107,7 @@ export default function App() {
 
         {/* Hero Content */}
         <div className="relative z-10 mx-auto max-w-7xl px-4 min-h-[70vh]">
-          <div className="absolute left-4 right-auto bottom-8 sm:bottom-16 md:left-8 md:right-auto md:bottom-auto md:top-1/2 md:-translate-y-1/2 w-[85%] s,:w-[60%] md:w-[45%] lg:w-[40%]">
+          <div className="absolute left-4 bottom-8 sm:left-8 sm:bottom-16 md:left-8 md:bottom-24 md:top-auto md:translate-y-0 w-[85%] sm:w-[60%] md:w-[45%] lg:w-[40%]">
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
