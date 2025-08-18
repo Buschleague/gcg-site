@@ -106,13 +106,13 @@ export default function App() {
         />
 
         {/* Hero Content */}
-        <div className="relative z-10 mx-auto max-w-6xl px-4 min-h-[70vh]">
-          <div className="absolute left-4 right-4 bottom-16 md:left-8 md:right-auto md:bottom-auto md:top-1/2 md:-translate-y-1/2">
+        <div className="relative z-10 mx-auto max-w-7xl px-4 min-h-[70vh]">
+          <div className="absolute left-4 right-auto bottom-8 sm:bottom-16 md:left-8 md:right-auto md:bottom-auto md:top-1/2 md:-translate-y-1/2 w-[85%] s,:w-[60%] md:w-[45%] lg:w-[40%]">
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="relative max-w-xl md:max-w-2xl"
+              className="relative"
             >
               {/* Localized scrim behind text */}
               <div
